@@ -1,0 +1,12 @@
+@use "variables" as *;
+
+@import "bootstrap/scss/bootstrap";
+
+
+.fondo {
+    background-image: url('../img/fondo.webp');
+    background-size: cover;
+    background-position: bottom;
+    height: 25rem;
+}
+
