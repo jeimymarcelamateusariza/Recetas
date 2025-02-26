@@ -36,7 +36,7 @@ function iniciarApp(){
       
     }
     function mostrarRecetas(recetas =[]){
-        limpiarHTML();
+        limpiarHTML(resultado);
         
         const heading = document.createElement('H2');
         heading.classList.add('text-center', 'my-5');
@@ -125,16 +125,31 @@ function iniciarApp(){
 
         modalBody.appendChild(listGroup);
 
+        const modalFooter = document.querySelector('.modal .modal-footer');
+        limpiarHTML(modalFooter);
+
+        //Botones
+        const btnFavorito = document.createElement('BUTTON');
+        btnFavorito.classList.add('btn', 'btn-primary', 'col');
+        btnFavorito.textContent = 'Guardar favorito';
+
+        const btnCerrar = document.createElement('BUTTON');
+        btnCerrar.classList.add('btn', 'btn-secondary', 'col');
+        btnCerrar.textContent = 'Cerrar';
+        btnCerrar.onclick = function(){
+            modal.hide();
+        }
+        
+        modalFooter.appendChild(btnFavorito);
+        modalFooter.appendChild(btnCerrar);
 
         //Muestra el modal
-        modal.show();
-
-        
+        modal.show();        
     }
 
-    function limpiarHTML(){
-        while(resultado.firstChild){
-            resultado.removeChild(resultado.firstChild);
+    function limpiarHTML(selector){
+        while(selector.firstChild){
+            selector.removeChild(selector.firstChild);
         }
     }
 }
