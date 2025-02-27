@@ -1,13 +1,21 @@
 function iniciarApp(){
 
-    const selectCategorias = document.querySelector('#categorias');
-    selectCategorias.addEventListener('change', seleccionarCategoria);
-
     const resultado = document.querySelector('#resultado');
+
+    const selectCategorias = document.querySelector('#categorias');
+    if(selectCategorias){
+        selectCategorias.addEventListener('change', seleccionarCategoria);
+        obtenerCategorias();
+    }
+
+    const favoritosDiv = document.querySelector('.favoritos');
+
+    if(favoritosDiv){
+        obtenerFavoritos();
+    }
+
+    
     const modal = new bootstrap.Modal('#modal', {});
-
-    obtenerCategorias();
-
 
     function obtenerCategorias(){
         const url = 'https://www.themealdb.com/api/json/v1/1/categories.php';
@@ -54,15 +62,15 @@ function iniciarApp(){
 
             const recetaImagen = document.createElement('IMG');
             recetaImagen.classList.add('card-img-top');
-            recetaImagen.alt = `Imagen de la receta ${strMeal}`;
-            recetaImagen.src = strMealThumb;
+            recetaImagen.alt = `Imagen de la receta ${strMeal ?? receta.title}`;
+            recetaImagen.src = strMealThumb ?? receta.img;
 
             const recetaCardBody = document.createElement('DIV');
             recetaCardBody.classList.add('card-body');
 
             const recetaHeading = document.createElement('H3');
             recetaHeading.classList.add('card-title', 'mb-3');
-            recetaHeading.textContent = strMeal;
+            recetaHeading.textContent = strMeal ?? receta.title;
 
             const recetaButton = document.createElement('BUTTON');
             recetaButton.classList.add('btn', 'btn-primary', 'w-100' , 'text-black');
@@ -70,7 +78,7 @@ function iniciarApp(){
             //recetaButton.dataset.bsTarget = "#modal";
             //recetaButton.dataset.bsToggle = "modal";
             recetaButton.onclick = function(){
-                seleccionarReceta(idMeal)
+                seleccionarReceta(idMeal ?? receta.id);
             }
 
             //Inyectar en el HTML
@@ -139,6 +147,7 @@ function iniciarApp(){
             if(existeStorage(idMeal)){
                 eliminarFavorito(idMeal);
                 btnFavorito.textContent = 'Guardar Favorito';
+                mostrarToast('Eliminado correctamente');
                 return
             }
 
@@ -148,6 +157,7 @@ function iniciarApp(){
                 img: strMealThumb
             });
             btnFavorito.textContent = 'Eliminar Favorito';
+            mostrarToast('Agregado correctamente');
 
         }
 
@@ -178,6 +188,26 @@ function iniciarApp(){
     function existeStorage(id){
         const favoritos = JSON.parse(localStorage.getItem('favoritos')) ?? [];
         return favoritos.some(favorito => favorito.id === id);
+    }
+
+    function mostrarToast(mensaje){
+        const toastDiv = document.querySelector("#toast");
+        const toastBody = document.querySelector(".toast-body");
+        const toast = new bootstrap.Toast(toastDiv);
+        toastBody.textContent = mensaje;
+        toast.show();
+    }
+
+    function obtenerFavoritos(){
+        const favoritos = JSON.parse(localStorage.getItem('favoritos')) ?? [];
+        if(favoritos.length){
+            mostrarRecetas(favoritos);
+            return
+        }
+        const noFavoritos = document.createElement('P');
+            noFavoritos.textContent = 'No hay favoritos todavia';
+            noFavoritos.classList.add('fs-4', 'text-center', 'font-bold', 'mt-5');
+            resultado.appendChild(noFavoritos);
     }
 
     function limpiarHTML(selector){
